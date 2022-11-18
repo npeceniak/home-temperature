@@ -4,8 +4,9 @@ import json
 from secret import ssid, password
 from phew import connect_to_wifi, logging, server, ntp
 from dht import DHT11
+from config import ip_address
 
-connect_to_wifi(ssid, password)
+connect_to_wifi(ssid, password, ip_address)
 timestamp = ntp.fetch(synch_with_rtc=True, timeout=10)
 
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
@@ -65,6 +66,29 @@ def logHandler(request):
     text_file.close()
     return data, 200, "application/json"
 
+@server.route("/dashboard", methods=["GET"])
+def logHandler(request):
+    response = """
+        <!doctype html>
+        <html>
+
+        <head>
+            <title>Dashboard</title>
+        </head>
+
+        <body>
+            <h3>Upstairs</h3>
+            <iframe src="http://192.168.5.234/json"></iframe>
+            <h3>Basement</h3>
+            <iframe src="http://192.168.5.38/json"></iframe>
+            <h3>Test Board</h3>
+            <iframe src="http://192.168.5.200/json"></iframe>
+        </body>
+
+        </html>
+    """
+    return response, 200, "text/html"
+
 @server.route("/help", methods=["GET"])
 def logHandler(request):
     response = """
@@ -87,7 +111,6 @@ def logHandler(request):
 
 @server.catchall()
 def catchall(request):
-    print(request.query)
     return "Not found see /help for valid endpoints", 404
 
 # Start Server

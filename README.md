@@ -1,5 +1,10 @@
 # home-temperature
 
+### prerequisites 
+
+- python3
+- make
+
 ## Submodule Commands
 Pull code for all submodules
 ```bash
