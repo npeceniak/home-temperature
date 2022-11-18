@@ -1,18 +1,15 @@
 import time
 import machine
 import json
-from secret import ssid, password
+from settings import ssid, password, ip_address, sensor_correction
 from phew import connect_to_wifi, logging, server, ntp
 from dht import DHT11
-from config import ip_address
 
 connect_to_wifi(ssid, password, ip_address)
 timestamp = ntp.fetch(synch_with_rtc=True, timeout=10)
 
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
 sensor = DHT11(machine.Pin(28, machine.Pin.OUT, machine.Pin.PULL_DOWN))
-
-sensor_correction = -1.8
 
 onboard_led.value(1)
 

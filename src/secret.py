@@ -1,2 +1,0 @@
-ssid = 'ENTER SSID HERE'
-password = 'ENTER PASSWORD HERE'

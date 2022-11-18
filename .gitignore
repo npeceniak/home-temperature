@@ -1,2 +1,3 @@
 venv/
 utils/config.json
+src/settings.py
