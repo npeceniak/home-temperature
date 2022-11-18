@@ -23,3 +23,6 @@ upload: prepare_venv
 
 run: prepare_venv
 	${RSHELL} repl pyboard import main
+
+config:
+	${PYTHON} ./utils/config.py
