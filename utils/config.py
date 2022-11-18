@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 # Adding optional argument
 parser.add_argument("-n", "--new-board", help = "Add a new board to the system.")
 parser.add_argument("-s", "--system", help = "Configure full system from scratch.")
+parser.add_argument("-g", "--gen-settings", help = "Generate settings.py file for a specific board.", action = "store_true")
  
 # Read arguments from command line
 args = parser.parse_args()
@@ -23,9 +24,8 @@ print(args)
 # Read Current Config File.
 config = {}
 try:
-    file = open(CONFIG_FILE_PATH, 'r')
-    config = json.loads(file.read())
-    file.close()
+    with open(CONFIG_FILE_PATH, "r") as config_input_file:
+        config = json.loads(config_input_file.read())
 except: 
     print("No existing config file found.")
 
@@ -65,13 +65,33 @@ if update_nodes:
     node_config = {}
     node_name = input("Node Name: ")
     node_config["ip_address"] = input("IP Address: ")
-    node_config["correction_value"] = input("Sensor Correction Value in Celsius: ")
+    node_config["sensor_correction"] = float(input("Sensor Correction Value in Celsius: "))
     config[NODES_KEY][node_name] = node_config
 
 print("Final Config: ")
 print(json.dumps(config, indent = 4))
 
 if input("Write config? (Y/n): ").upper() == "Y":
-    file = open(CONFIG_FILE_PATH, 'w')
-    file.write(json.dumps(config, indent = 4))
-    file.close()
+    with open(CONFIG_FILE_PATH, "w") as config_output_file:
+        config_output_file.write(json.dumps(config, indent = 4))
+
+# Write settings.py to src directory for deployment to board.
+print("Configured Nodes: ")
+for item in config[NODES_KEY].keys():
+    print("  - " + item)
+
+active_node = input("Write settings for which node: ")
+
+if config[NODES_KEY].get(active_node) != None:
+    print(config[NODES_KEY].get(active_node))
+    active_node_data = config[NODES_KEY].get(active_node)
+    print(active_node_data)
+    setting_output_file_path = os.path.abspath(SRC_PATH + "/settings.py")
+
+    with open(setting_output_file_path, "w") as setting_output_file:
+        setting_output_file.write(f"ssid = \"{config[SYSTEM_KEY].get('ssid')}\"\n")
+        setting_output_file.write(f"password = \"{config[SYSTEM_KEY].get('password')}\"\n")
+        setting_output_file.write(f"ip_address = \"{active_node_data.get('ip_address')}\"\n")
+        setting_output_file.write(f"sensor_correction = {active_node_data.get('sensor_correction')}\n")
+else:
+    print(active_node, " not found in config. Exiting...")

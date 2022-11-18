@@ -11,7 +11,7 @@ timestamp = ntp.fetch(synch_with_rtc=True, timeout=10)
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
 sensor = DHT11(machine.Pin(28, machine.Pin.OUT, machine.Pin.PULL_DOWN))
 
-onboard_led.value(1)
+onboard_led.value(0)
 
 logging.truncate(5)
 
@@ -65,25 +65,9 @@ def logHandler(request):
 
 @server.route("/dashboard", methods=["GET"])
 def logHandler(request):
-    response = """
-        <!doctype html>
-        <html>
-
-        <head>
-            <title>Dashboard</title>
-        </head>
-
-        <body>
-            <h3>Upstairs</h3>
-            <iframe src="http://192.168.5.234/json"></iframe>
-            <h3>Basement</h3>
-            <iframe src="http://192.168.5.38/json"></iframe>
-            <h3>Test Board</h3>
-            <iframe src="http://192.168.5.200/json"></iframe>
-        </body>
-
-        </html>
-    """
+    html_file = open("html/dashboard.html", "r")
+    response = html_file.read()
+    html_file.close()
     return response, 200, "text/html"
 
 @server.route("/help", methods=["GET"])
