@@ -83,7 +83,6 @@ for item in config[NODES_KEY].keys():
 active_node = input("Write settings for which node: ")
 
 if config[NODES_KEY].get(active_node) != None:
-    print(config[NODES_KEY].get(active_node))
     active_node_data = config[NODES_KEY].get(active_node)
     print(active_node_data)
     setting_output_file_path = os.path.abspath(SRC_PATH + "/settings.py")

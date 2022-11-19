@@ -5,6 +5,20 @@
 - python3
 - make
 
+
+### Setup System From Scratch
+
+- Build nodes according to spec with pico w and dht11 sensor
+    - TODO: Add circuit diagram
+
+1. Connect node to machine via USB
+2. Run the following and follow the prompts
+    ```bash
+    make generate_dashboard clear_board config upload run
+    ```
+
+The `dashboard` endpoint will be avaliable on every node configured by going to http://<IP>/dashboard 
+
 ## Submodule Commands
 Pull code for all submodules
 ```bash

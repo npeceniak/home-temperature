@@ -26,3 +26,6 @@ run: prepare_venv
 
 config:
 	${PYTHON} ./utils/config.py
+
+generate_dashboard:
+	${PYTHON} ./utils/gen_html.py
