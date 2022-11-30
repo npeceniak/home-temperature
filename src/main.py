@@ -1,6 +1,7 @@
 import time
 import machine
 import json
+import uasyncio
 from settings import ssid, password, ip_address, sensor_correction
 from phew import connect_to_wifi, logging, server, ntp
 from dht import DHT11
@@ -95,4 +96,21 @@ def catchall(request):
     return "Not found see /help for valid endpoints", 404
 
 # Start Server
-server.run()
+# server.run()
+
+
+# Async Test
+
+async def main():
+    print("starting server")
+    uasyncio.create_task(uasyncio.start_server(server._handle_request, '0.0.0.0', 80))
+
+    while True:
+        print("Measure Sensor")
+        await uasyncio.sleep(5)
+
+
+try:
+    uasyncio.run(main())
+finally:
+    uasyncio.new_event_loop()
