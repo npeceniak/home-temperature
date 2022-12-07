@@ -21,6 +21,7 @@ class Sensor:
                 "low_temp": None
             }
         self.tempHistory = []
+        self.readSensor()
 
     def readSensor(self):
         logging.info("readSensor Called")
@@ -53,14 +54,17 @@ class Sensor:
     def getHistory(self):
         return json.dumps(self.tempHistory)
 
-    def saveToHistory(self, timestamp):
+    def saveToHistory(self, timestamp=None):
+        # Every 10 minutes for 24 hours.
+        DATA_POINTS_TO_KEEP = 144
+
         data = {
             "temperature": self.data["corrected_tempF"], 
             "timestamp": timestamp or self.data["time"],
             "humidity": self.data["humidity"]
         }
         logging.info("Saving ", data)
-        if len(self.tempHistory) > 100:
+        if len(self.tempHistory) > DATA_POINTS_TO_KEEP:
             # Remove oldest entry in the list
             self.tempHistory.pop(0)
         
