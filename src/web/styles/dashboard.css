@@ -1,0 +1,8 @@
+body {
+    background-color: rgb(114, 114, 114);
+}
+
+.frameContainer {
+    flex-grow: 1;
+    background-color: rgb(235, 235, 235);
+}

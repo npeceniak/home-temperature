@@ -1,8 +1,11 @@
+# https://github.com/ikornaselur/pico-libs/blob/master/src/dht11/dht.py
+
 import array
 import micropython
 import utime
 from machine import Pin
 from micropython import const
+from phew import logging
  
 class InvalidChecksum(Exception):
     pass
@@ -10,7 +13,7 @@ class InvalidChecksum(Exception):
 class InvalidPulseCount(Exception):
     pass
  
-MAX_UNCHANGED = const(100)
+MAX_UNCHANGED = const(200)
 MIN_INTERVAL_US = const(200000)
 HIGH_LEVEL = const(50)
 EXPECTED_PULSES = const(84)
@@ -26,6 +29,7 @@ class DHT11:
         self._humidity = -1
  
     def measure(self):
+        logging.info("Sensor measure called...")
         current_ticks = utime.ticks_us()
         if utime.ticks_diff(current_ticks, self._last_measure) < MIN_INTERVAL_US and (
             self._temperature > -1 or self._humidity > -1
@@ -33,24 +37,29 @@ class DHT11:
             # Less than a second since last read, which is too soon according
             # to the datasheet
             return
- 
-        self._send_init_signal()
-        pulses = self._capture_pulses()
-        buffer = self._convert_pulses_to_buffer(pulses)
-        self._verify_checksum(buffer)
- 
-        self._humidity = buffer[0] + buffer[1] / 10
-        self._temperature = buffer[2] + buffer[3] / 10
-        self._last_measure = utime.ticks_us()
+
+        try:
+            self._send_init_signal()
+            pulses = self._capture_pulses()
+            buffer = self._convert_pulses_to_buffer(pulses)
+            self._verify_checksum(buffer)
+    
+            self._humidity = buffer[0] + buffer[1] / 10
+            self._temperature = buffer[2] + buffer[3] / 10
+            self._last_measure = utime.ticks_us()
+
+        except Exception as e:
+            logging.error(e)
+            logging.info("Calling measure again in 10 seconds...")
+            utime.sleep(10)
+            self.measure()
  
     @property
     def humidity(self):
-        self.measure()
         return self._humidity
  
     @property
     def temperature(self):
-        self.measure()
         return self._temperature
  
     def _send_init_signal(self):
@@ -88,9 +97,11 @@ class DHT11:
                 unchanged += 1
         pin.init(Pin.OUT, Pin.PULL_DOWN)
         if idx != EXPECTED_PULSES:
+            logging.info(transitions)
             raise InvalidPulseCount(
                 "Expected {} but got {} pulses".format(EXPECTED_PULSES, idx)
             )
+        logging.info("Successful Sensor Read.")
         return transitions[4:]
  
     def _convert_pulses_to_buffer(self, pulses):

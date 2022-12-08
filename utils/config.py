@@ -92,5 +92,6 @@ if config[NODES_KEY].get(active_node) != None:
         setting_output_file.write(f"password = \"{config[SYSTEM_KEY].get('password')}\"\n")
         setting_output_file.write(f"ip_address = \"{active_node_data.get('ip_address')}\"\n")
         setting_output_file.write(f"sensor_correction = {active_node_data.get('sensor_correction')}\n")
+        setting_output_file.write(f"node_name = \"{active_node}\"\n")
 else:
     print(active_node, " not found in config. Exiting...")
