@@ -6,7 +6,7 @@ from phew import connect_to_wifi, logging, server, ntp
 from sensor import Sensor
 
 connect_to_wifi(ssid, password, ip_address)
-timestamp = ntp.fetch(synch_with_rtc=True, timeout=10)
+ntp.fetch(synch_with_rtc=True, timeout=10)
 
 onboard_led = machine.Pin("LED", machine.Pin.OUT)
 
@@ -23,7 +23,6 @@ def getTimeString():
 def getDateString():
     now = time.localtime()
     return str(now[0]) + "-" + str(now[1]) + "-" + str(now[2])
-
 
 @server.route("/json", methods=["GET"])
 def jsonHandler(request):
@@ -42,34 +41,38 @@ def logHandler(request):
 
 @server.route("/dashboard", methods=["GET"])
 def logHandler(request):
-    html_file = open("html/dashboard.html", "r")
+    html_file = open("web/html/dashboard.html", "r")
     response = html_file.read()
     html_file.close()
     return response, 200, "text/html"
 
-@server.route("/help", methods=["GET"])
+@server.route("/chart", methods=["GET"])
 def logHandler(request):
-    response = """
-        <!doctype html>
-        <html>
-
-        <head>
-            <title>Help Page</title>
-        </head>
-
-        <body>
-            <h3>Endpoints</h3>
-            <div>/json - json output for temp and humidity</div>
-            <div>/log - output system log</div>  
-        </body>
-
-        </html>
-    """
+    html_file = open("web/html/chart.html", "r")
+    response = html_file.read()
+    html_file.close()
     return response, 200, "text/html"
 
 @server.catchall()
 def catchall(request):
-    return "Not found see /help for valid endpoints", 404
+    path = "web" + request.path
+    fileType = ""
+    
+    if path[-4] == ".css":
+        fileType = "text/css"
+    elif path[-3] == ".js":
+        fileType = "text/javascript"
+    elif path[-5] == ".html":
+        fileType = "text/html"
+    
+    try:
+        file = open(path, "r")
+        response = file.read()
+        file.close()
+        return response, 200, fileType
+    except:
+        logging.error("Request to ", path, " not found")
+        return "Not found", 404
 
 
 async def main():
@@ -80,8 +83,10 @@ async def main():
     while True:
         READ_SENSOR_INTERVAL_MINUTE = 5
         SAVE_TO_HISTORY_INTERVAL_MINUTE = 10
+        now = time.localtime()
 
-        minute = time.localtime()[4]
+        hour = now[3]
+        minute = now[4]
 
         # Read sensor every 5 minutes.
         if minute % READ_SENSOR_INTERVAL_MINUTE == 0:
@@ -93,6 +98,9 @@ async def main():
             logging.info("Saving to history....")
             # TODO: Pass a timestamp to this function.
             sensor.saveToHistory()
+
+        if hour == 0 and minute == 0:
+            sensor.resetHighLow()
 
         await uasyncio.sleep(60) #Seconds
 

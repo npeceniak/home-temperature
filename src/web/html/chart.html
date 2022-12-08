@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+	<title>Dashboard</title>
+    <!-- https://www.chartjs.org/docs/latest/charts/line.html -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h3 id="nodeName"></h3>
+    <div>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+        <div>
+            <label>Temperature: </label><span id="temperatureValue"></span><span> - </span>
+            <label>Humidity: </label><span id="humidityValue"></span><br/>
+            <label>High/Low Today: </label><span id="highTempValue"></span><span> / </span><span id="lowTempValue"></span>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="/js/chart.js"></script>

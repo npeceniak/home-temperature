@@ -17,19 +17,18 @@ except:
 
 NODES_KEY = "nodes"
 
-header = "<!doctype html>\n<html>\n<head>\n\t<title>Dashboard</title>\n</head>\n<body>\n"
+header = "<!doctype html>\n<html>\n<head>\n\t<title>Dashboard</title>\n<link rel=\"stylesheet\" href=\"/styles/dashboard.css\">\n</head>\n<body>\n"
 body = ""
 if config.get(NODES_KEY) != None:
     for node in config.get(NODES_KEY).keys():
         ip_address = config.get(NODES_KEY)[node]['ip_address']
-        labelTag = f"\t<h3>{node}</h3>\n"
-        iframeTag = f"\t<iframe src='http://{ip_address}/json'></iframe>\n"
-        body = body + labelTag + iframeTag
+        iframeTag = f"\t<iframe class=\"frameContainer\" src='http://{ip_address}/chart'></iframe>\n"
+        body = body + iframeTag
 
 footer = "</html>"
 
 
-with open(os.path.abspath(SRC_PATH + "/html/dashboard.html"), "w") as dashboard_output_file: 
+with open(os.path.abspath(SRC_PATH + "/web/html/dashboard.html"), "w") as dashboard_output_file: 
     dashboard_output_file.write(header)
     dashboard_output_file.write(body)
     dashboard_output_file.write(footer)

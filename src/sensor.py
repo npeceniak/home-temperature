@@ -1,5 +1,5 @@
 from dht import DHT11
-from settings import sensor_correction
+from settings import sensor_correction, node_name
 import machine
 import json
 import time
@@ -11,14 +11,12 @@ class Sensor:
     def __init__(self):
         logging.info("Initialize Sensor")
         self.data = {
-                "tempC": None,
-                "tempF": None,
-                "humidity": None,
-                "corrected_tempC": None,
-                "corrected_tempF": None,
-                "time": None,
-                "high_temp": None,
-                "low_temp": None
+                "name": node_name,
+                "humidity": 0,
+                "tempF": 0,
+                "time": "",
+                "high_temp": 0,
+                "low_temp": 200
             }
         self.tempHistory = []
         self.readSensor()
@@ -30,23 +28,26 @@ class Sensor:
             sensor.measure()
             humidity = sensor.humidity
             tempC = sensor.temperature
-            tempF = (tempC * 9/5) + 32
             corrected_tempC = tempC + sensor_correction
-            corrected_tempF = (corrected_tempC * 9/5) + 32
+            corrected_tempF = int((corrected_tempC * 9/5) + 32)
 
-            self.data = {
-                "tempC": tempC,
-                "tempF": tempF,
-                "humidity": humidity,
-                "corrected_tempC": corrected_tempC,
-                "corrected_tempF": int(corrected_tempF),
-                "time": str(now[0]) + "-" + str(now[1]) + "-" + str(now[2]) + " " + str(now[3]) + ":" + str(now[4]),
-                "high_temp": 0,
-                "low_temp": 0
-            }
+            self.data["humidity"] = humidity
+            self.data["tempF"] = corrected_tempF
+            self.data["time"] = str(now[0]) + "-" + str(now[1]) + "-" + str(now[2]) + " " + str(now[3]) + ":" + str(now[4])
 
+            if corrected_tempF > self.data["high_temp"]:
+                self.data["high_temp"] =  corrected_tempF
+
+            if corrected_tempF < self.data["low_temp"]:
+                self.data["low_temp"] =  corrected_tempF
+            
         except Exception as e:
             logging.error(e)
+
+    def resetHighLow(self):
+        logging.info("Resetting High and Low values for today.")
+        self.data["high_temp"] = self.data["tempF"]
+        self.data["low_temp"] = self.data["tempF"]
 
     def getJsonResponse(self):
         return json.dumps(self.data)
@@ -59,7 +60,7 @@ class Sensor:
         DATA_POINTS_TO_KEEP = 144
 
         data = {
-            "temperature": self.data["corrected_tempF"], 
+            "temperature": self.data["tempF"], 
             "timestamp": timestamp or self.data["time"],
             "humidity": self.data["humidity"]
         }
