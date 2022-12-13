@@ -6,7 +6,7 @@ function renderChart(inputData) {
 
     temperature = inputData.map(element => {
         return {
-            x: element.timestamp.substr(9),
+            x: element.timestamp.substring(11),
             y: parseInt(element.temperature)
         }
     })

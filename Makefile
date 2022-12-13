@@ -19,7 +19,7 @@ clear_board: prepare_venv
 	${RSHELL} rm -rf /pyboard
 
 upload: prepare_venv
-	${RSHELL} cp -r ./lib/phew/phew/. ./src/* /pyboard/
+	${RSHELL} cp -r ./src/* /pyboard/
 
 run: prepare_venv
 	${RSHELL} repl pyboard import main

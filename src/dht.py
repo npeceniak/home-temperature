@@ -5,7 +5,6 @@ import micropython
 import utime
 from machine import Pin
 from micropython import const
-from phew import logging
  
 class InvalidChecksum(Exception):
     pass
@@ -29,7 +28,6 @@ class DHT11:
         self._humidity = -1
  
     def measure(self):
-        logging.info("Sensor measure called...")
         current_ticks = utime.ticks_us()
         if utime.ticks_diff(current_ticks, self._last_measure) < MIN_INTERVAL_US and (
             self._temperature > -1 or self._humidity > -1
@@ -49,8 +47,6 @@ class DHT11:
             self._last_measure = utime.ticks_us()
 
         except Exception as e:
-            logging.error(e)
-            logging.info("Calling measure again in 10 seconds...")
             utime.sleep(10)
             self.measure()
  
@@ -97,11 +93,9 @@ class DHT11:
                 unchanged += 1
         pin.init(Pin.OUT, Pin.PULL_DOWN)
         if idx != EXPECTED_PULSES:
-            logging.info(transitions)
             raise InvalidPulseCount(
                 "Expected {} but got {} pulses".format(EXPECTED_PULSES, idx)
             )
-        logging.info("Successful Sensor Read.")
         return transitions[4:]
  
     def _convert_pulses_to_buffer(self, pulses):
