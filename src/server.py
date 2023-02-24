@@ -269,6 +269,12 @@ async def _handle_request(reader, writer):
     response.add_header("Content-Type", content_type)
     if hasattr(body, '__len__'):
       response.add_header("Content-Length", len(body))
+
+  # Bypass CORS
+  response.add_header("Access-Control-Allow-Origin", "*")
+  response.add_header("Access-Control-Allow-Methods", "*")
+  response.add_header("Access-Control-Allow-Headers", "*")
+  response.add_header("Access-Control-Allow-Credentials", "true")
   
   # write status line
   status_message = status_message_map.get(response.status, "Unknown")

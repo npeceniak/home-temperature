@@ -1,27 +1,22 @@
 import server
 from sensor import sensor
 
+@server.route("/current", methods=["GET"])
+def jsonHandler(request):
+    return sensor.getCurrentResponse(), 200, "application/json"
+
+# For Backwards compatabililty. Remove once front end is updated.
 @server.route("/json", methods=["GET"])
 def jsonHandler(request):
-    return sensor.getJsonResponse(), 200, "application/json"
+    return sensor.getCurrentResponse(), 200, "application/json"
 
 @server.route("/history", methods=["GET"])
 def jsonHandler(request):
     return sensor.getHistory(), 200, "application/json"
 
-@server.route("/dashboard", methods=["GET"])
-def logHandler(request):
-    html_file = open("web/html/dashboard.html", "r")
-    response = html_file.read()
-    html_file.close()
-    return response, 200, "text/html"
-
-@server.route("/chart", methods=["GET"])
-def logHandler(request):
-    html_file = open("web/html/chart.html", "r")
-    response = html_file.read()
-    html_file.close()
-    return response, 200, "text/html"
+@server.route("/data", methods=["GET"])
+def jsonHandler(request):
+    return sensor.getDataResponse(), 200, "application/json"
 
 @server.catchall()
 def catchall(request):

@@ -42,7 +42,13 @@ class Sensor:
         self.data["high_temp"] = self.data["tempF"]
         self.data["low_temp"] = self.data["tempF"]
 
-    def getJsonResponse(self):
+    def getDataResponse(self):
+        return json.dumps({
+            "data": self.data,
+            "history": self.tempHistory
+        })
+
+    def getCurrentResponse(self):
         return json.dumps(self.data)
 
     def getHistory(self):

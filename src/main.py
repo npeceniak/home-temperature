@@ -23,7 +23,7 @@ async def main():
         if minute % READ_SENSOR_INTERVAL_MINUTE == 0:
             sensor.readSensor()
 
-        # Save every 10 minutes.
+        # Save every 15 minutes.
         if minute % SAVE_TO_HISTORY_INTERVAL_MINUTE == 0:
             sensor.saveToHistory()
 
