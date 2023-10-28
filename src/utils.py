@@ -16,7 +16,7 @@ def connect_to_wifi():
     if ip_address != None:
         # Values represent IP address, netmask, gateway, DNS.
         # gateway may need to be updated based on network config
-        wlan.ifconfig((ip_address, '255.255.255.0', '192.168.5.1', '8.8.8.8'))
+        wlan.ifconfig((ip_address, '255.255.252.0', '192.168.4.1', '8.8.8.8'))
     else:
         print("No Static Ip set. Using DHCP")
 

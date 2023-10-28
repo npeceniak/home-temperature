@@ -5,11 +5,6 @@ from sensor import sensor
 def jsonHandler(request):
     return sensor.getCurrentResponse(), 200, "application/json"
 
-# For Backwards compatabililty. Remove once front end is updated.
-@server.route("/json", methods=["GET"])
-def jsonHandler(request):
-    return sensor.getCurrentResponse(), 200, "application/json"
-
 @server.route("/history", methods=["GET"])
 def jsonHandler(request):
     return sensor.getHistory(), 200, "application/json"
