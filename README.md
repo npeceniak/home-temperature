@@ -9,7 +9,8 @@
 ### Setup System From Scratch
 
 - Build nodes according to spec with pico w and dht11 sensor
-    - TODO: Add circuit diagram
+
+![Diagram](./images/TempSensorWireDiagram_small.png)
 
 1. Connect node to machine via USB
 2. Run the following and follow the prompts
