@@ -12,19 +12,23 @@ class Sensor:
             corrected_tempC = tempC + sensor_correction
             corrected_tempF = int((corrected_tempC * 9/5) + 32)
 
-            post_endpoint = 'http://' + api_hostname
-            post_headers = {'content-type': 'application/json'}
-            post_data = json.dumps({
+            formatted_data = {
                 "location": node_name,
                 "humidity": hardware_sensor.humidity,
                 "temp_f": corrected_tempF,
                 "temp_c": corrected_tempC,
                 "timestamp": utils.getDateTimeString()
-            })
+            }
 
-            print(post_data)
+            post_endpoint = 'http://' + api_hostname
+            post_headers = {'content-type': 'application/json'}
+            post_data = json.dumps(formatted_data)
 
-            urequests.post(post_endpoint, headers=post_headers, data=post_data)
+            try:
+                resp = urequests.post(post_endpoint, headers=post_headers, data=post_data)
+                resp.close()
+            except Exception as e:
+                print("Post exception:", e)
             
         except Exception as e:
             print("readSensor error:", e)
