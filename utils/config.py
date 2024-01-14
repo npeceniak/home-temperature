@@ -46,6 +46,7 @@ if update_system_config:
     system_config = {}
     system_config["ssid"] = input("Network SSID: ")
     system_config["password"] = input("Network Password ")
+    system_config["api_hostname"] = input("API Hostname ")
     config[SYSTEM_KEY] = system_config
 
 
@@ -90,6 +91,7 @@ if config[NODES_KEY].get(active_node) != None:
     with open(setting_output_file_path, "w") as setting_output_file:
         setting_output_file.write(f"ssid = \"{config[SYSTEM_KEY].get('ssid')}\"\n")
         setting_output_file.write(f"password = \"{config[SYSTEM_KEY].get('password')}\"\n")
+        setting_output_file.write(f"api_hostname = \"{config[SYSTEM_KEY].get('api_hostname')}\"\n")
         setting_output_file.write(f"ip_address = \"{active_node_data.get('ip_address')}\"\n")
         setting_output_file.write(f"sensor_correction = {active_node_data.get('sensor_correction')}\n")
         setting_output_file.write(f"node_name = \"{active_node}\"\n")
