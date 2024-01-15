@@ -13,14 +13,14 @@ class Sensor:
             corrected_tempF = int((corrected_tempC * 9/5) + 32)
 
             formatted_data = {
-                "location": node_name,
                 "humidity": hardware_sensor.humidity,
                 "temp_f": corrected_tempF,
                 "temp_c": corrected_tempC,
                 "timestamp": utils.getDateTimeString()
             }
 
-            post_endpoint = 'http://' + api_hostname
+            post_endpoint = 'http://' + api_hostname + '/temperature/' + node_name
+
             post_headers = {'content-type': 'application/json'}
             post_data = json.dumps(formatted_data)
 
