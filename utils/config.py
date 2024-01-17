@@ -67,6 +67,7 @@ if update_nodes:
     node_name = input("Node Name: ")
     node_config["ip_address"] = input("IP Address: ")
     node_config["sensor_correction"] = float(input("Sensor Correction Value in Celsius: "))
+    node_config["sensor_type"] = input("Sensor Type (dht11, dht22): ")
     config[NODES_KEY][node_name] = node_config
 
 print("Final Config: ")
@@ -95,5 +96,7 @@ if config[NODES_KEY].get(active_node) != None:
         setting_output_file.write(f"ip_address = \"{active_node_data.get('ip_address')}\"\n")
         setting_output_file.write(f"sensor_correction = {active_node_data.get('sensor_correction')}\n")
         setting_output_file.write(f"node_name = \"{active_node}\"\n")
+        setting_output_file.write(f"sensor_type = \"{active_node_data.get('sensor_type')}\"\n")
+
 else:
     print(active_node, " not found in config. Exiting...")

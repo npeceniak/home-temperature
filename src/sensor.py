@@ -1,23 +1,24 @@
-from dht import DHT11
-from settings import sensor_correction, node_name, api_hostname
+from dht import DHT22
+from settings import sensor_correction, node_name, api_hostname, sensor_type
 import machine, json, utils, urequests
 
-hardware_sensor = DHT11(machine.Pin(28, machine.Pin.OUT, machine.Pin.PULL_DOWN))
+dht11 = sensor_type == "dht11"
 
+hardware_sensor = DHT22(machine.Pin(28, machine.Pin.OUT, machine.Pin.PULL_DOWN),dht11=dht11)
 class Sensor:
     def sendReading(self):
         try:
-            hardware_sensor.measure()
-            tempC = hardware_sensor.temperature
+            tempC, humidity = hardware_sensor.read()
             corrected_tempC = tempC + sensor_correction
-            corrected_tempF = int((corrected_tempC * 9/5) + 32)
+            corrected_tempF = round((corrected_tempC * 9/5) + 32)
 
             formatted_data = {
-                "humidity": hardware_sensor.humidity,
+                "humidity": round(humidity),
                 "temp_f": corrected_tempF,
-                "temp_c": corrected_tempC,
                 "timestamp": utils.getDateTimeString()
             }
+
+            # print(formatted_data)
 
             post_endpoint = 'http://' + api_hostname + '/temperature/' + node_name
 
